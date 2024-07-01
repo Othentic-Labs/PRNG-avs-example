@@ -36,7 +36,7 @@ async function electedLeader(blockNumber) {
   const count = await attestationCenterContract.numOfOperators({
     blockTag: blockNumber,
   });
-  const selectedOperatorId = (BigInt(blockNumber) % count) + 1n;
+  const selectedOperatorId = (BigInt(blockNumber)/20n % count) + 1n;
   const paymentDetails =
     await attestationCenterContract.getOperatorPaymentDetail(
       selectedOperatorId,
@@ -98,14 +98,17 @@ provider.on("block", async (blockNumber) => {
 app.post("/task/validate", async (req, res) => {
   const { proofOfTask, performer } = req.body;
   const blockNumber = parseInt(proofOfTask.split("+")[0], 10); // Extract the block number from the proof of task
-  const electedPerformer = electedLeader(blockNumber); // Get the elected performer for that block
+  const electedPerformer = await electedLeader(blockNumber); // Get the elected performer for that block
 
   console.log(
     `Validating task for block number: ${blockNumber}, Task Performer: ${performer}, Elected Performer: ${electedPerformer}`
   );
 
   let isValid = performer === electedPerformer; // Verify the performer is the elected performer
-
+  console.log("====================================")
+  console.log("isValid", isValid);
+  console.log("performer", performer);
+  console.log("electedPerformer", electedPerformer);
   res.status(200);
   res.json({
     data: isValid,
