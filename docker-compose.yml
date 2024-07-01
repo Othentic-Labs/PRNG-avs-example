@@ -68,7 +68,7 @@ services:
         ipv4_address: 10.8.0.4
   attester-1-avs:
     build:
-      context: ./attestator
+      context: ./attester
       dockerfile: ./Dockerfile
     env_file:
       - .env
@@ -80,7 +80,7 @@ services:
         ipv4_address: 10.8.0.42
   attester-2-avs:
     build:
-      context: ./attestator
+      context: ./attester
       dockerfile: ./Dockerfile
     env_file:
       - .env
@@ -92,7 +92,7 @@ services:
         ipv4_address: 10.8.0.43
   attester-3-avs:
     build:
-      context: ./attestator
+      context: ./attester
       dockerfile: ./Dockerfile
     env_file:
       - .env
