@@ -105,10 +105,6 @@ app.post("/task/validate", async (req, res) => {
   );
 
   let isValid = performer === electedPerformer; // Verify the performer is the elected performer
-  console.log("====================================")
-  console.log("isValid", isValid);
-  console.log("performer", performer);
-  console.log("electedPerformer", electedPerformer);
   res.status(200);
   res.json({
     data: isValid,
