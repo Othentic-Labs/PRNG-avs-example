@@ -17,11 +17,12 @@ $$    $$/   $$  $$/ $$ |  $$ |$$       |$$ |  $$ |  $$  $$/ $$ |$$       |
  */
 
 import {Test, console} from "forge-std/Test.sol";
+import {IAttestationCenter} from "../src/IAttestationCenter.sol";
 import {PRNG} from "../src/PRNG.sol";
 
 contract CounterTest is Test {
     PRNG testContract;
-    address attestationCenter = makeAddr('attestationCenter');
+    address attestationCenter = makeAddr("attestationCenter");
 
     function setUp() public {
         testContract = new PRNG(attestationCenter);
@@ -30,9 +31,7 @@ contract CounterTest is Test {
     function test_acl() public {
         vm.expectRevert("Not allowed");
         testContract.afterTaskSubmission(
-            0,
-            makeAddr('performer'),
-            "123456",
+            IAttestationCenter.TaskInfo("123456", hex"", makeAddr("performer"), 0),
             true,
             hex"",
             [uint(0), uint(0)],
@@ -43,9 +42,7 @@ contract CounterTest is Test {
     function test_random() public {
         vm.prank(attestationCenter);
         testContract.afterTaskSubmission(
-            0,
-            makeAddr('performer'),
-            "123456",
+            IAttestationCenter.TaskInfo("123456", hex"", makeAddr("performer"), 0),
             true,
             hex"",
             [uint(0), uint(0)],
