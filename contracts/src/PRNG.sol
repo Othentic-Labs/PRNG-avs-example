@@ -26,15 +26,15 @@ contract PRNG is IAvsLogic {
         attestationCenter = _attestationCenter;
     }
 
-    function afterTaskSubmission(uint16 /* _taskDefinitionId */, address /* _performerAddr */, string calldata _proofOfTask, bool /* _isApproved */, bytes calldata /* _tpSignature */, uint256[2] calldata /* _taSignature */, uint256[] calldata /* _operatorIds */) external {
+    function afterTaskSubmission(IAttestationCenter.TaskInfo calldata _taskInfo, bool /* _isApproved */, bytes calldata /* _tpSignature */, uint256[2] calldata /* _taSignature */, uint256[] calldata /* _operatorIds */) external {
         require(msg.sender == attestationCenter, "Not allowed");
 
         random = uint(keccak256(abi.encode(block.timestamp))) ^
             uint(keccak256(abi.encode(block.prevrandao))) ^
-            uint(keccak256(bytes(_proofOfTask)));
+            uint(keccak256(bytes(_taskInfo.proofOfTask)));
     }
 
-    function beforeTaskSubmission(uint16 _taskDefinitionId, address _performerAddr, string calldata _proofOfTask, bool _isApproved, bytes calldata _tpSignature, uint256[2] calldata _taSignature, uint256[] calldata _operatorIds) external {
+    function beforeTaskSubmission(IAttestationCenter.TaskInfo calldata _taskInfo, bool _isApproved, bytes calldata _tpSignature, uint256[2] calldata _taSignature, uint256[] calldata _operatorIds) external {
         // No implementation
     }
 }

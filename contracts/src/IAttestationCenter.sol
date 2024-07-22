@@ -16,6 +16,11 @@ $$    $$/   $$  $$/ $$ |  $$ |$$       |$$ |  $$ |  $$  $$/ $$ |$$       |
  * @notice Terms of Service: https://www.othentic.xyz/terms-of-service
  */
 interface IAttestationCenter {
+    struct TaskInfo {
+        string proofOfTask;
+        bytes data;
+        address taskPerformer;
+        uint16 taskDefinitionId;
+    }
     function setAvsLogic(address _avsLogic) external;
 }
-
