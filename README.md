@@ -1,9 +1,10 @@
 # 🍀 Othentic PRNG AVS Example
 
-The othentic CLI can be used to create any AVS with just a few lines of code in any language you prefer. Let's look at an example for a psuedo random number generator. We provide a sample docker-compose configuration which sets up the following services:
+The othentic CLI can be used to create any AVS with just a few lines of code in any language you prefer. Let's look at an example for a pseudo random number generator. We provide a sample docker-compose configuration which sets up the following services:
 - Aggregator node
 - 3 Attester nodes
 - AVS WebAPI endpoint
+- Sync service for operators
 
 ## Run the demo
 
@@ -18,7 +19,7 @@ Run the install script:
 forge script PRNGDeploy --rpc-url $L2_RPC --private-key $PRIVATE_KEY --broadcast -vvvv --verify --etherscan-api-key $L2_ETHERSCAN_API_KEY --chain $L2_CHAIN --verifier-url $L2_VERIFIER_URL --sig="run(address)" $ATTESTATION_CENTER_ADDRESS
 ```
 
-Now go back to the root of the repository and run the docker compose configuraion:
+Now go back to the root of the repository and run the docker compose configuration:
 ```bash
 docker-compose up --build
 ```
