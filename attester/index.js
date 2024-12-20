@@ -90,9 +90,9 @@ provider.on("block", async (blockNumber) => {
 });
 
 /**
- * AVS WebAPI endpoint:
+ * AVS Validation service endpoint:
  * This endpoint is responsible for validating that a task was performed by
- * the correct performer. It receives the performer from the Othentic node
+ * the correct performer. It receives the proof of Task from the a node
  * and checks that it's the `currentPerformer`.
  */
 app.post("/task/validate", async (req, res) => {
