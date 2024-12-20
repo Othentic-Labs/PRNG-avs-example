@@ -14,7 +14,7 @@ This repository demonstrates the implementation of a leader election algorithm f
 ## Overview
 
 This repository provides:
-- An implementation of a leader election algorithm for Task Performers.
+- An implementation of round-robin leader election algorithm for Task Performers.
 - A pseudo-random number generator (PRNG) implementation using [AVS Logic Hook](https://docs.othentic.xyz/main/avs-framework/smart-contracts/hooks/task-logic). The PRNG smart contract implements the logic for generating a pseudo-random number after task execution.
 
 ## Project Structure
