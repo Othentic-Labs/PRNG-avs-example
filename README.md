@@ -1,6 +1,6 @@
 # PRNG AVS Example
 
-This repository demonstrates the implementation of a leader election algorithm for Task Performers. Learn more about task allocation to different nodes in the [official documentation](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#task-allocation-to-operators).
+This repository demonstrates the advanced features of the othentic-cli. It`s recommended to set up the simple-price-oracle-avs first before diving into more advanced features.
 
 ## Table of Contents
 
@@ -13,8 +13,8 @@ This repository demonstrates the implementation of a leader election algorithm f
 
 ## Overview
 
-This repository provides:
-- An implementation of round-robin leader election algorithm for Task Performers.
+This repository contains:
+- An implementation of a leader election algorithm for Task Performers. Learn more about task allocation to different nodes in the [official documentation](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#task-allocation-to-operators).
 - A pseudo-random number generator (PRNG) implementation using [AVS Logic Hook](https://docs.othentic.xyz/main/avs-framework/smart-contracts/hooks/task-logic). The PRNG smart contract implements the logic for generating a pseudo-random number after task execution.
 
 ## Project Structure
@@ -54,6 +54,7 @@ This repository provides:
 
 
 ## Usage
+// git clone with submodules
 1. Create a .env file and include the contract addresses and private keys for the operators.
 
 2. First, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory:
@@ -64,7 +65,7 @@ forge install
 ```
 3. Run the installation script to deploy the contract:
 ```bash
-forge script PRNGDeploy --rpc-url $L2_RPC --private-key $PRIVATE_KEY --broadcast -vvvv --verify --etherscan-api-key $L2_ETHERSCAN_API_KEY --chain $L2_CHAIN --verifier-url $L2_VERIFIER_URL --sig="run(address)" $ATTESTATION_CENTER_ADDRESS
+forge script PRNGDeploy --fork-url $L2_RPC --private-key $PRIVATE_KEY --broadcast -vvvv --verify --etherscan-api-key $L2_ETHERSCAN_API_KEY --chain $L2_CHAIN --sig="run(address)" $ATTESTATION_CENTER_ADDRESS
 ```
 
 4. Once the contract is deployed, return to the root of the repository and start the Docker Compose configuration:
