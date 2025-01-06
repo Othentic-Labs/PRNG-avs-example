@@ -1,6 +1,6 @@
 # PRNG AVS Example
 
-This repository demonstrates the advanced features of the othentic-cli. It`s recommended to set up the simple-price-oracle-avs first before diving into more advanced features.
+This repository demonstrates the advanced features of the othentic-cli. It`s recommended to set up the [simple-price-oracle-avs](https://github.com/Othentic-Labs/simple-price-oracle-avs-example) first before diving into more advanced features.
 
 ## Table of Contents
 
@@ -54,10 +54,9 @@ This repository contains:
 
 
 ## Usage
-// git clone with submodules
-1. Create a .env file and include the contract addresses and private keys for the operators.
+1. Create a .env file and include the deployed contract addresses and private keys for the operators. If you are unfamiliar with AVS, Checkout the [Quickstart guide](https://docs.othentic.xyz/main/avs-framework/quick-start).
 
-2. First, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory:
+2. To use hooks, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory:
 
 ```bash
 cd contracts/
