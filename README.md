@@ -15,7 +15,8 @@ This repository demonstrates the advanced features of the `othentic-cli`. It's r
 
 This repository contains:
 - **Leader Election Algorithm**: Implements a leader election algorithm to allocate task among multiple Performer nodes. Learn more about different task allocation mechanisms in the [official documentation](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#task-allocation-to-operators).
-- **AVS Logic Hook**: A pseudo-random number generator (PRNG) implementation using [AVS Logic Hook](https://docs.othentic.xyz/main/avs-framework/smart-contracts/hooks/task-logic). The PRNG smart contract implements the logic for generating a pseudo-random number after task execution.
+- **AVS Logic Hook**: Hooks enable developers to integrate custom logic seamlessly. The pseudo-random number generator (PRNG) smart contract utilizes this feature to generate a pseudo-random number after task execution. Learn more about [AVS Logic Hook](https://docs.othentic.xyz/main/avs-framework/smart-contracts/hooks/task-logic). 
+- **Custom Task trigger**: The Othentic framework provides flexibility to define custom logic for triggering tasks. In this example, Performer nodes monitor new blocks and execute a task every 20 blocks. Learn more about [Triggering a task](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#triggering-a-task)
 
 ## Project Structure
 

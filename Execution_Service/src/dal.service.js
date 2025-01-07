@@ -16,7 +16,7 @@ async function sendTask(proofOfTask, data, taskDefinitionId) {
   const message = ethers.AbiCoder.defaultAbiCoder().encode(["string", "bytes", "address", "uint16"], [proofOfTask, data, performerAddress, taskDefinitionId]);
   const messageHash = ethers.keccak256(message);
   const sig = wallet.signingKey.sign(messageHash).serialized;
-  console.log("Start222")
+  
   const jsonRpcBody = {
     jsonrpc: "2.0",
     method: "sendTask",
