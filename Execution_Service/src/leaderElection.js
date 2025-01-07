@@ -23,8 +23,7 @@ async function electedLeader(blockNumber) {
     blockTag: blockNumber,
   });
   const selectedOperatorId = (BigInt(blockNumber)/20n % count) + 1n;
-  const paymentDetails =
-  await attestationCenterContract.getOperatorPaymentDetail(
+  const paymentDetails = await attestationCenterContract.getOperatorPaymentDetail(
     selectedOperatorId,
     { blockTag: blockNumber }
   );

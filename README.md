@@ -37,6 +37,8 @@ Attester Nodes validate task execution through the Validation Service. Based on 
 
 ### Leader election logic:
 The task performer is selected in a round-robin manner by computing `blockNumber % numOfOperators`, ensuring each operator performs tasks in a fair and predictable order.
+- The total number of operators is retrieved using the [numOfActiveOperators](https://github.com/Othentic-Labs/core-contracts/blob/main/src/NetworkManagement/L2/AttestationCenter.sol#L129) method in the attestation center contract.
+- The operator's address is fetched using the [getOperatorPaymentDetail](https://github.com/Othentic-Labs/core-contracts/blob/main/src/NetworkManagement/L2/AttestationCenter.sol#L133) method by providing the operator ID.
 
 ### Task Execution logic:
 Once an operator is selected to perform a task, they generate a proof (a combination of block number and timestamp) and sign it with their private key. This proof is sent to the attester node to confirm that the task was performed.
@@ -63,7 +65,7 @@ The server exposes an endpoint `/task/validate` for validating the task performa
 ## Usage
 1. Create a .env file and include the deployed contract addresses and private keys for the operators. If you are unfamiliar with AVS, Checkout the [Quickstart guide](https://docs.othentic.xyz/main/avs-framework/quick-start).
 
-2. Deploy the PRNG Contract: To use hooks, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory:
+2. Deploy the PRNG Contract: To use hooks, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory. Note that deploying this contract is optional; the AVS can run without it. This step is primarily for showcasing the use of hooks.
 
 ```bash
 cd contracts/
