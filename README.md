@@ -1,6 +1,6 @@
 # PRNG AVS Example
 
-This repository demonstrates the advanced features of the othentic-cli. It`s recommended to set up the [simple-price-oracle-avs](https://github.com/Othentic-Labs/simple-price-oracle-avs-example) first before diving into more advanced features.
+This repository demonstrates the advanced features of the `othentic-cli`. It's recommended to set up the [simple-price-oracle-avs](https://github.com/Othentic-Labs/simple-price-oracle-avs-example) first before diving into more advanced features.
 
 ## Table of Contents
 
@@ -14,35 +14,41 @@ This repository demonstrates the advanced features of the othentic-cli. It`s rec
 ## Overview
 
 This repository contains:
-- An implementation of a leader election algorithm for Task Performers. Learn more about task allocation to different nodes in the [official documentation](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#task-allocation-to-operators).
-- A pseudo-random number generator (PRNG) implementation using [AVS Logic Hook](https://docs.othentic.xyz/main/avs-framework/smart-contracts/hooks/task-logic). The PRNG smart contract implements the logic for generating a pseudo-random number after task execution.
+- **Leader Election Algorithm**: Implements a leader election algorithm to allocate task among multiple Performer nodes. Learn more about different task allocation mechanisms in the [official documentation](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#task-allocation-to-operators).
+- **AVS Logic Hook**: A pseudo-random number generator (PRNG) implementation using [AVS Logic Hook](https://docs.othentic.xyz/main/avs-framework/smart-contracts/hooks/task-logic). The PRNG smart contract implements the logic for generating a pseudo-random number after task execution.
 
 ## Project Structure
 
 ```mdx
 📂 PRNG-avs-example
-├── attester  # Implements task execution and validation logic
+├── Execution_Service  # Implements task execution and leader election logic
+├── Validation_Service # Implements task validation logic
+├── grafana            # Grafana monitoring configuration
 ├── contracts # PRNG contract and scripts
-├── docker-compose.yml # # Docker setup for Operator Nodes including Attesters, and Aggregator
+├── docker-compose.yml # # Docker setup for Operator Nodes (Performer, Attesters, Aggregator), Execution Service, Validation Service, and monitoring tools
 └── README.md          # Project documentation
 ```
 
 ## Architecture
-### Task Performer Selection (Round Robin):
-- The task performer is selected in a round-robin manner by computing `blockNumber % numOfOperators`, ensuring each operator performs tasks in a fair and predictable order.
+The Performer node executes tasks using the Task Execution Service and sends the results to the p2p network.
+
+Attester Nodes validate task execution through the Validation Service. Based on the Validation Service's response, attesters sign the tasks. In this AVS:
+
+### Leader election logic:
+The task performer is selected in a round-robin manner by computing `blockNumber % numOfOperators`, ensuring each operator performs tasks in a fair and predictable order.
 
 ### Task Execution logic:
-- Once an operator is selected to perform a task, they generate a proof (a combination of block number and timestamp) and sign it with their private key. This proof is sent to the attester node to confirm that the task was performed.
+Once an operator is selected to perform a task, they generate a proof (a combination of block number and timestamp) and sign it with their private key. This proof is sent to the attester node to confirm that the task was performed.
 
 ### Validation Service logic:
-- The server exposes an endpoint `/task/validate` for validating the task performance. This endpoint checks if the provided task proof corresponds to the correct performer for the specified block number.
+The server exposes an endpoint `/task/validate` for validating the task performance. This endpoint checks if the provided task proof corresponds to the correct performer for the specified block number.
 
 ### Task Flow
-1. The system listens for new blocks.
+1. The Performer nodes listens for new blocks.
 2. Every 20th block selects a task performer.
 3. If the current block is the performer's turn, the task is executed, and a proof is generated.
 4. The proof is sent to the attester node.
-5. The /task/validate endpoint is called internally, to check if the task was performed by the correct operator.
+5. The `/task/validate` endpoint is called internally, to check if the task was performed by the correct operator.
 
 
 ## Prerequisites
@@ -56,18 +62,15 @@ This repository contains:
 ## Usage
 1. Create a .env file and include the deployed contract addresses and private keys for the operators. If you are unfamiliar with AVS, Checkout the [Quickstart guide](https://docs.othentic.xyz/main/avs-framework/quick-start).
 
-2. To use hooks, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory:
+2. Deploy the PRNG Contract: To use hooks, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory:
 
 ```bash
 cd contracts/
 forge install
-```
-3. Run the installation script to deploy the contract:
-```bash
 forge script PRNGDeploy --fork-url $L2_RPC --private-key $PRIVATE_KEY --broadcast -vvvv --verify --etherscan-api-key $L2_ETHERSCAN_API_KEY --chain $L2_CHAIN --sig="run(address)" $ATTESTATION_CENTER_ADDRESS
 ```
 
-4. Once the contract is deployed, return to the root of the repository and start the Docker Compose configuration:
+3. Once the contract is deployed, return to the root of the repository and start the Docker Compose configuration:
 ```bash
 docker-compose up --build
 ```
