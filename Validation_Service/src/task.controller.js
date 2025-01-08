@@ -2,7 +2,7 @@
 const { Router } = require("express")
 const CustomError = require("./utils/validateError");
 const CustomResponse = require("./utils/validateResponse");
-const leaderElectionService = require("./leaderElection");
+const leaderElectionService = require("./leaderElection.service");
 
 const router = Router()
 

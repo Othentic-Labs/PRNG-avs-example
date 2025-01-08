@@ -22,10 +22,10 @@ This repository contains:
 
 ```mdx
 📂 PRNG-avs-example
-├── Execution_Service  # Implements task execution and leader election logic
-├── Validation_Service # Implements task validation logic
-├── grafana            # Grafana monitoring configuration
-├── contracts # PRNG contract and scripts
+├── 📂 Execution_Service  # Implements task execution and leader election logic
+├── 📂 Validation_Service # Implements task validation logic
+├── 📂 grafana            # Grafana alerting and monitoring configuration
+├── 📂 contracts # PRNG contract implementation using Hooks and deployment scripts
 ├── docker-compose.yml # # Docker setup for Operator Nodes (Performer, Attesters, Aggregator), Execution Service, Validation Service, and monitoring tools
 └── README.md          # Project documentation
 ```
