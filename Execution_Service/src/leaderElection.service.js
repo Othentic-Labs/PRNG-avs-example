@@ -24,7 +24,7 @@ const attestationCenterContract = new ethers.Contract(
 /**
  * Find the elected task performer for a certain block using Round Robin algorithm
  */
-async function electedLeader(blockNumber) {
+async function electedLeaderRoundRobin(blockNumber) {
   const count = await attestationCenterContract.numOfActiveOperators({
     blockTag: blockNumber,
   });
@@ -112,7 +112,7 @@ async function electStakeWeighedLeader(blockNumber) {
 
 
 module.exports = {
-    electedLeader,
+    electedLeader: electedLeaderRoundRobin,
     electRandomLeader,
     electStakeWeighedLeader
 }
