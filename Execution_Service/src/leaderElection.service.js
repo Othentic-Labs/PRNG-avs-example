@@ -21,6 +21,18 @@ const attestationCenterContract = new ethers.Contract(
   attestationCenterAbi,
   provider
 );
+
+async function getRandomNumber(blockNumber, range) {
+  // Fetch the block details
+  const block = await provider.getBlock(blockNumber);
+  console.log("Block: ", block.prevRandao)
+  const prevrandao = block.prevrandao ? BigInt(block.prevrandao) : 0n;
+  console.log("prevrandao", prevrandao)
+
+  const randomValue = prevrandao % BigInt(range);
+  return Number(randomValue);
+}
+
 /**
  * Find the elected task performer for a certain block using Round Robin algorithm
  */
@@ -46,7 +58,7 @@ async function electRandomLeader(blockNumber) {
   if (count === 0) {
     throw new Error("No active operators available");
   }
-  const selectedOperatorId = Math.floor(Math.random() * count) + 1;
+  const selectedOperatorId = await getRandomNumber(blockNumber, count) + 1;
   const paymentDetails = await attestationCenterContract.getOperatorPaymentDetail(
     selectedOperatorId,
     { blockTag: blockNumber }
@@ -54,15 +66,15 @@ async function electRandomLeader(blockNumber) {
   return paymentDetails[0];
 }
 
-function weightedRandom(stakeWeights) {
+async function weightedRandom(blockNumber, stakeWeights) {
   console.log("Staked weights", stakeWeights)
   const totalWeight = stakeWeights.reduce((sum, { weight }) => sum + weight, 0n);
 
   if (totalWeight === 0n) {
-    return Math.floor(Math.random() * Number(stakeWeights.length)) + 1;
+    return await getRandomNumber(blockNumber, Number(stakeWeights.length)) + 1; // Math.floor(Math.random() * Number(stakeWeights.length)) + 1;
   }
 
-  const randomValue = BigInt(Math.floor(Math.random() * Number(totalWeight)));
+  const randomValue = await getRandomNumber(blockNumber, Number(totalWeight));
   let cumulativeWeight = 0n;
   for (const { id, weight } of stakeWeights) {
     cumulativeWeight += weight;
@@ -100,7 +112,7 @@ async function electStakeWeighedLeader(blockNumber) {
   );
 
   const stakeWeights = await Promise.all(stakePromises);
-  const selectedOperatorId = weightedRandom(stakeWeights);
+  const selectedOperatorId = await weightedRandom(blockNumber, stakeWeights);
   console.log("selected Operator Id", selectedOperatorId)
 
   const paymentDetails = await attestationCenterContract.getOperatorPaymentDetail(
