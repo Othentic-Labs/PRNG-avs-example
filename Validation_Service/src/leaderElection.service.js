@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const rpcUrl = process.env.L2_RPC;
 const provider = new ethers.JsonRpcProvider(rpcUrl);
+const l1Provider = new ethers.JsonRpcProvider(process.env.L1_RPC);
 
 // The AttestationCenter contract object
 const attestationCenterAddress = process.env.ATTESTATION_CENTER_ADDRESS;
@@ -24,9 +25,9 @@ const attestationCenterContract = new ethers.Contract(
 
 async function getRandomNumber(blockNumber, range) {
   // Fetch the block details
-  const block = await provider.getBlock(blockNumber);
+  const block = await l1Provider.getBlock("latest");
   console.log("Block: ", block.prevRandao)
-  const prevrandao = block.prevrandao ? BigInt(block.prevrandao) : 0n;
+  const prevrandao = block.prevRandao ? BigInt(block.prevRandao) : 0n;
   console.log("prevrandao", prevrandao)
 
   const randomValue = prevrandao % BigInt(range);
