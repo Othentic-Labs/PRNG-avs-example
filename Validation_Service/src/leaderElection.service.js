@@ -4,6 +4,7 @@ require('dotenv').config();
 const rpcUrl = process.env.L2_RPC;
 const provider = new ethers.JsonRpcProvider(rpcUrl);
 const l1Provider = new ethers.JsonRpcProvider(process.env.L1_RPC);
+const EXECUTION_INTERVAL = 20n; // Defines the number of blocks between each task execution
 
 // The AttestationCenter contract object
 const attestationCenterAddress = process.env.ATTESTATION_CENTER_ADDRESS;
@@ -38,10 +39,13 @@ async function getRandomNumber(blockNumber, range) {
  * Find the elected task performer for a certain block using Round Robin algorithm
  */
 async function electedLeaderRoundRobin(blockNumber) {
-  const count = await attestationCenterContract.numOfActiveOperators({
+  const numOfActiveOperators = await attestationCenterContract.numOfActiveOperators({
     blockTag: blockNumber,
   });
-  const selectedOperatorId = (BigInt(blockNumber)/20n % count) + 1n;
+  if (numOfActiveOperators === 0) {
+    throw new Error("No active operators available");
+  }
+  const selectedOperatorId = (BigInt(blockNumber)/EXECUTION_INTERVAL % numOfActiveOperators) + 1n;
   const paymentDetails = await attestationCenterContract.getOperatorPaymentDetail(
     selectedOperatorId,
     { blockTag: blockNumber }
@@ -53,13 +57,13 @@ async function electedLeaderRoundRobin(blockNumber) {
  * Find the elected task performer randomly
  */
 async function electRandomLeader(blockNumber) {
-  const count = await attestationCenterContract.numOfActiveOperators({
+  const numOfActiveOperators = await attestationCenterContract.numOfActiveOperators({
     blockTag: blockNumber,
   });
-  if (count === 0) {
+  if (numOfActiveOperators === 0) {
     throw new Error("No active operators available");
   }
-  const selectedOperatorId = await getRandomNumber(blockNumber, count) + 1;
+  const selectedOperatorId = await getRandomNumber(blockNumber, numOfActiveOperators) + 1;
   const paymentDetails = await attestationCenterContract.getOperatorPaymentDetail(
     selectedOperatorId,
     { blockTag: blockNumber }
