@@ -25,12 +25,10 @@ const attestationCenterContract = new ethers.Contract(
 );
 
 async function getRandomNumber(blockNumber, range) {
-  // Fetch the block details
   const block = await l1Provider.getBlock("latest");
-  console.log("Block: ", block.prevRandao)
-  const prevrandao = block.prevRandao ? BigInt(block.prevRandao) : 0n;
-  console.log("prevrandao", prevrandao)
-
+  console.log("Block Number: ", block.number)
+  const prevrandao = BigInt(block.prevRandao);
+  console.log("Block prevRandao", prevrandao)
   const randomValue = prevrandao % BigInt(range);
   return Number(randomValue);
 }
