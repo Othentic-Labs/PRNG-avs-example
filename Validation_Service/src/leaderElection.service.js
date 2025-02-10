@@ -24,6 +24,11 @@ const attestationCenterContract = new ethers.Contract(
   provider
 );
 
+/**
+ * If your AVS involves significant financial value, prevRandao may not a suitable source of randomness.
+ * Consider using VRF or a comparable service that provides verifiable randomness.
+ */
+
 async function getRandomNumber(blockNumber, range) {
   const block = await l1Provider.getBlock("latest");
   console.log("Block Number: ", block.number)
