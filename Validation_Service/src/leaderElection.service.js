@@ -9,13 +9,7 @@ const EXECUTION_INTERVAL = 20n; // Defines the number of blocks between each tas
 // The AttestationCenter contract object
 const attestationCenterAddress = process.env.ATTESTATION_CENTER_ADDRESS;
 const attestationCenterAbi = [
-  "function numOfActiveOperators() view returns (uint256)",
-  "function getOperatorPaymentDetail(uint256) view returns (address, uint256, uint256, uint8)",
-  "function obls() view returns (address)"
-];
-
-const oblsAbi = [
-  "function votingPower(uint256) view returns (uint256)",
+  "function getActiveOperatorsDetails() view returns (tuple(address operator, uint256 operatorId, uint256 votingPower)[])"
 ];
 
 const attestationCenterContract = new ethers.Contract(
@@ -25,115 +19,86 @@ const attestationCenterContract = new ethers.Contract(
 );
 
 /**
- * If your AVS involves significant financial value, prevRandao may not a suitable source of randomness.
- * Consider using VRF or a comparable service that provides verifiable randomness.
+ * Fetch all active operator details
  */
-
-async function getRandomNumber(blockNumber, range) {
-  const block = await l1Provider.getBlock("latest");
-  console.log("Block Number: ", block.number)
-  const prevrandao = BigInt(block.prevRandao);
-  console.log("Block prevRandao", prevrandao)
-  const randomValue = prevrandao % BigInt(range);
-  return Number(randomValue);
+async function getActiveOperators(blockNumber) {
+  const operators = await attestationCenterContract.getActiveOperatorsDetails({
+    blockTag: blockNumber,
+  });
+  if (operators.length === 0) {
+    throw new Error("No active operators available");
+  }
+  return operators;
 }
 
 /**
- * Find the elected task performer for a certain block using Round Robin algorithm
+ * Find the elected task performer using the Round Robin algorithm
  */
-async function electedLeaderRoundRobin(blockNumber) {
-  const numOfActiveOperators = await attestationCenterContract.numOfActiveOperators({
-    blockTag: blockNumber,
-  });
-  if (numOfActiveOperators === 0) {
-    throw new Error("No active operators available");
-  }
-  const selectedOperatorId = (BigInt(blockNumber)/EXECUTION_INTERVAL % numOfActiveOperators) + 1n;
-  const paymentDetails = await attestationCenterContract.getOperatorPaymentDetail(
-    selectedOperatorId,
-    { blockTag: blockNumber }
-  );
-  return paymentDetails[0];
+async function electLeaderRoundRobin(blockNumber) {
+  const operators = await getActiveOperators(blockNumber);
+  const numOfActiveOperators = BigInt(operators.length);
+  const selectedIndex = (BigInt(blockNumber) / EXECUTION_INTERVAL % numOfActiveOperators);
+  return operators[Number(selectedIndex)].operator;
 }
 
 /**
  * Find the elected task performer randomly
  */
 async function electRandomLeader(blockNumber) {
-  const numOfActiveOperators = await attestationCenterContract.numOfActiveOperators({
-    blockTag: blockNumber,
-  });
-  if (numOfActiveOperators === 0) {
-    throw new Error("No active operators available");
-  }
-  const selectedOperatorId = await getRandomNumber(blockNumber, numOfActiveOperators) + 1;
-  const paymentDetails = await attestationCenterContract.getOperatorPaymentDetail(
-    selectedOperatorId,
-    { blockTag: blockNumber }
-  );
-  return paymentDetails[0];
+  const operators = await getActiveOperators(blockNumber);
+  const randomIndex = await getRandomNumber(blockNumber, operators.length);
+  return operators[randomIndex].operator;
 }
 
-async function weightedRandom(blockNumber, stakeWeights) {
-  console.log("Staked weights", stakeWeights)
-  const totalWeight = stakeWeights.reduce((sum, { weight }) => sum + weight, 0n);
+/**
+ * Select an operator based on stake-weighted randomization
+ */
+async function weightedRandom(blockNumber, operators) {
+  const totalWeight = operators.reduce((sum, { votingPower }) => sum + BigInt(votingPower), 0n);
 
   if (totalWeight === 0n) {
-    return await getRandomNumber(blockNumber, Number(stakeWeights.length)) + 1; // Math.floor(Math.random() * Number(stakeWeights.length)) + 1;
+    const randomIndex = await getRandomNumber(blockNumber, operators.length);
+    return operators[randomIndex].operatorId;
   }
 
   const randomValue = await getRandomNumber(blockNumber, Number(totalWeight));
   let cumulativeWeight = 0n;
-  for (const { id, weight } of stakeWeights) {
-    cumulativeWeight += weight;
+  for (const { operatorId, votingPower } of operators) {
+    cumulativeWeight += BigInt(votingPower);
     if (randomValue <= cumulativeWeight) {
-      return id;
+      return operatorId;
     }
   }
 
   throw new Error("Failed to select a weighted random operator");
 }
 
-
 /**
- * Find the elected task performer randomly
+ * Find the elected task performer using stake-weighted randomization
  */
 async function electStakeWeighedLeader(blockNumber) {
-  const count = await attestationCenterContract.numOfActiveOperators({
-    blockTag: blockNumber,
-  });
-  const oblsContractAddress = await attestationCenterContract.obls({
-    blockTag: blockNumber,
-  });
-  const oblsContract = new ethers.Contract(
-    oblsContractAddress,
-    oblsAbi,
-    provider
-  );
-  if (count === 0) {
-    throw new Error("No active operators available");
-  }
-  const stakePromises = Array.from({ length: Number(count) }, (_, i) =>
-    oblsContract.votingPower(i + 1, {
-      blockTag: blockNumber,
-    }).then((stake) => ({ id: i + 1, weight: BigInt(stake) }))
-  );
-
-  const stakeWeights = await Promise.all(stakePromises);
-  const selectedOperatorId = await weightedRandom(blockNumber, stakeWeights);
-  console.log("selected Operator Id", selectedOperatorId)
-
-  const paymentDetails = await attestationCenterContract.getOperatorPaymentDetail(
-    selectedOperatorId,
-    { blockTag: blockNumber }
-  );
-  return paymentDetails[0];
+  console.log("leader election")
+  const operators = await getActiveOperators(blockNumber);
+  const selectedOperatorId = await weightedRandom(blockNumber, operators);
+  const selectedOperator = operators.find((op) => op.operatorId === selectedOperatorId);
+  console.log("selected leader", selectedOperator)
+  return selectedOperator.operator;
 }
 
+/**
+ * Helper function to generate a random number.
+ */
+async function getRandomNumber(blockNumber, range) {
+  const block = await l1Provider.getBlock("latest");
+  console.log("Block Number: ", block.number);
+  const prevrandao = BigInt(block.prevRandao);
+  console.log("Block prevRandao", prevrandao);
+  const randomValue = prevrandao % BigInt(range);
+  return Number(randomValue);
+}
 
 module.exports = {
-    electedLeader: electedLeaderRoundRobin,
-    electRandomLeader,
-    electStakeWeighedLeader
-}
-  
+  electLeaderRoundRobin,
+  electRandomLeader,
+  electStakeWeighedLeader,
+};

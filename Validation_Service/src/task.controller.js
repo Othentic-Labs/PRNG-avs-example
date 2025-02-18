@@ -12,7 +12,7 @@ router.post("/validate", async (req, res) => {
     try {
         const { proofOfTask, performer } = req.body;
         const blockNumber = parseInt(proofOfTask.split("+")[0], 10); // Extract the block number from the proof of task
-        const electedPerformer = await leaderElectionService.electStakeWeighedLeader(blockNumber); // Get the elected performer for that block
+        const electedPerformer = await leaderElectionService.electLeaderRoundRobin(blockNumber); // Get the elected performer for that block
     
         console.log(
             `Validating task for block number: ${blockNumber}, Task Performer: ${performer}, Elected Performer: ${electedPerformer}`

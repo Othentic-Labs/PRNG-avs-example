@@ -17,7 +17,8 @@ function start() {
     provider.on("block", async (blockNumber) => {
         if (blockNumber % EXECUTION_INTERVAL == 0) {
         // Every operator knows who is supposed to send a task in the next block
-        const currentPerformer = await leaderElectionService.electStakeWeighedLeader(blockNumber);
+        const currentPerformer = await leaderElectionService.electLeaderRoundRobin(blockNumber);
+        console.log("Elected Operator", currentPerformer)
     
         // If the current performer is the operator itself, it performs the task
         if (currentPerformer === nodeAccount.address) {
