@@ -2,11 +2,13 @@
   "name": "execution_service",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "module": "ESModule",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": ""
+    "build": "",
+    "test": "jest"
   },
   "author": "",
   "license": "BUSL-1.1",
@@ -21,5 +23,9 @@
     "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
     "nodemon": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0"
   }
 }

@@ -34,16 +34,16 @@ async function getActiveOperators(blockNumber) {
 /**
  * Helper function to select an operator based on stake-weighted randomization
  */
-async function weightedRandom(blockNumber, operators) {
-  const sortedOperators = [...operators].sort((a, b) => BigInt(b.votingPower) - BigInt(a.votingPower));
+async function weightedRandom(operators) {
+  const sortedOperators = [...operators].sort((a, b) => Number(BigInt(b.votingPower) - BigInt(a.votingPower)));
   const totalWeight = sortedOperators.reduce((sum, { votingPower }) => sum + BigInt(votingPower), 0n);
 
   if (totalWeight === 0n) {
-    const randomIndex = await getRandomNumber(blockNumber, operators.length);
+    const randomIndex = await getRandomNumber(operators.length);
     return operators[randomIndex].operatorId;
   }
 
-  const randomValue = await getRandomNumber(blockNumber, Number(totalWeight));
+  const randomValue = await getRandomNumber(Number(totalWeight));
   let cumulativeWeight = 0n;
   for (const { operatorId, votingPower } of operators) {
     cumulativeWeight += BigInt(votingPower);
@@ -58,7 +58,7 @@ async function weightedRandom(blockNumber, operators) {
 /**
  * Helper function to generate a random number
  */
-async function getRandomNumber(blockNumber, range) {
+async function getRandomNumber(range) {
   const block = await l1Provider.getBlock("latest");
   console.log("Block Number: ", block.number);
   const prevrandao = BigInt(block.prevRandao);
@@ -82,7 +82,7 @@ async function electLeaderRoundRobin(blockNumber) {
  */
 async function electRandomLeader(blockNumber) {
   const operators = await getActiveOperators(blockNumber);
-  const randomIndex = await getRandomNumber(blockNumber, operators.length);
+  const randomIndex = await getRandomNumber(operators.length);
   return operators[randomIndex].operator;
 }
 
@@ -90,11 +90,9 @@ async function electRandomLeader(blockNumber) {
  * Find the elected task performer using stake-weighted randomization
  */
 async function electStakeWeighedLeader(blockNumber) {
-  console.log("leader election")
   const operators = await getActiveOperators(blockNumber);
-  const selectedOperatorId = await weightedRandom(blockNumber, operators);
+  const selectedOperatorId = await weightedRandom(operators);
   const selectedOperator = operators.find((op) => op.operatorId === selectedOperatorId);
-  console.log("selected leader", selectedOperator)
   return selectedOperator.operator;
 }
 
