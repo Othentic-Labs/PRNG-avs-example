@@ -39,7 +39,7 @@ describe("Leader Election Functions", () => {
 
     it("should elect a leader using stake-weighted randomization", async () => {
         const leader = await electStakeWeighedLeader(101);
-        expect(leader).toBe("0xOperator4")
+        expect(leader).toBe("0xOperator1")
     });
 });
 

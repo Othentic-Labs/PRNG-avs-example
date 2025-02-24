@@ -39,13 +39,13 @@ async function weightedRandom(operators) {
   const totalWeight = sortedOperators.reduce((sum, { votingPower }) => sum + BigInt(votingPower), 0n);
 
   if (totalWeight === 0n) {
-    const randomIndex = await getRandomNumber(operators.length);
-    return operators[randomIndex].operatorId;
+    const randomIndex = await getRandomNumber(sortedOperators.length);
+    return sortedOperators[randomIndex].operatorId;
   }
 
   const randomValue = await getRandomNumber(Number(totalWeight));
   let cumulativeWeight = 0n;
-  for (const { operatorId, votingPower } of operators) {
+  for (const { operatorId, votingPower } of sortedOperators) {
     cumulativeWeight += BigInt(votingPower);
     if (randomValue <= cumulativeWeight) {
       return operatorId;
