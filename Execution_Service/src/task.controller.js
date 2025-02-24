@@ -6,6 +6,7 @@ const dalService = require("./dal.service");
 const rpcUrl = process.env.L2_RPC;
 const provider = new ethers.JsonRpcProvider(rpcUrl);
 const nodeAccount = new ethers.Wallet(process.env.PRIVATE_KEY); // The signing key for performing tasks
+const EXECUTION_INTERVAL = 20; // Defines the number of blocks between each task execution
 
 function performTask(blockNumber) {
     // Add your task execution logic here.
@@ -14,9 +15,10 @@ function performTask(blockNumber) {
 }
 function start() {
     provider.on("block", async (blockNumber) => {
-        if (blockNumber % 20 == 0) {
+        if (blockNumber % EXECUTION_INTERVAL == 0) {
         // Every operator knows who is supposed to send a task in the next block
-        const currentPerformer = await leaderElectionService.electedLeader(blockNumber);
+        const currentPerformer = await leaderElectionService.electLeaderRoundRobin(blockNumber);
+        console.log("Elected Operator", currentPerformer)
     
         // If the current performer is the operator itself, it performs the task
         if (currentPerformer === nodeAccount.address) {

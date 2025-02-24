@@ -36,7 +36,11 @@ The Performer node executes tasks using the Task Execution Service and sends the
 Attester Nodes validate task execution through the Validation Service. Based on the Validation Service's response, attesters sign the tasks. In this AVS:
 
 ### Leader election logic:
-The task performer is selected in a round-robin manner by computing `blockNumber % numOfOperators`, ensuring each operator performs tasks in a fair and predictable order.
+In this repository we have implemented 3 different leader election algorithms. 
+1. Round Robin: The task performer is selected in a round-robin manner by computing `blockNumber % numOfOperators`, ensuring each operator performs tasks in a fair and predictable order.
+2. Random selection: A random operator is chosen from the list of active operators for each block.
+3. Stake weighted random selection: This algorithm selects a leader based on the voting power of each operator. The idea is to give operators with higher stakes a greater chance of being selected. The probability of selection is proportional to the operator's stake, meaning operators with larger stakes are more likely to be chosen, but all operators still have a chance.
+
 - The total number of operators is retrieved using the [numOfActiveOperators](https://github.com/Othentic-Labs/core-contracts/blob/main/src/NetworkManagement/L2/AttestationCenter.sol#L129) method in the attestation center contract.
 - The operator's address is fetched using the [getOperatorPaymentDetail](https://github.com/Othentic-Labs/core-contracts/blob/main/src/NetworkManagement/L2/AttestationCenter.sol#L133) method by providing the operator ID.
 
