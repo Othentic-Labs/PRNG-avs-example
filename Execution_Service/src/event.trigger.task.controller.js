@@ -5,7 +5,7 @@ const dalService = require("./dal.service");
 const WS_RPC_URL = process.env.WS_RPC_URL;
 const provider = new ethers.WebSocketProvider(WS_RPC_URL);
 
-const CONTRACT_ADDRESS = "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789";
+const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS ?? "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789";
 const eventSignature = "UserOperationEvent(bytes32,address,address,uint256,bool,uint256,uint256)";
 const topic = ethers.keccak256(ethers.toUtf8Bytes(eventSignature)); 
 
@@ -20,7 +20,7 @@ const filter = {
 };
 
 
-// Create an interface instance for decoding
+// Create an interface instance for decoding the Topic data
 const eventABI = ["event UserOperationEvent(bytes32 indexed userOpHash, address indexed sender, address indexed paymaster, uint256 nonce, bool success, uint256 actualGasCost, uint256 actualGasUsed)"];
 const iface = new Interface(eventABI)
 
