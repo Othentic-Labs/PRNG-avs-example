@@ -14,9 +14,12 @@ This repository demonstrates the advanced features of the `othentic-cli`. It's r
 ## Overview
 
 This repository contains:
+
 - **Leader Election Algorithm**: Implements a leader election algorithm to allocate task among multiple Performer nodes. Learn more about different task allocation mechanisms in the [official documentation](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#task-allocation-to-operators).
+
 - **AVS Logic Hook**: Hooks enable developers to integrate custom logic seamlessly. The pseudo-random number generator (PRNG) smart contract utilizes this feature to generate a pseudo-random number after task execution. Learn more about [AVS Logic Hook](https://docs.othentic.xyz/main/avs-framework/smart-contracts/hooks/task-logic). 
-- **Custom Task trigger**: The Othentic framework provides flexibility to define custom logic for triggering tasks. In this example, Performer nodes monitor new blocks and execute a task every 20 blocks. Learn more about [Triggering a task](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#triggering-a-task)
+
+- **Custom Task triggers**: The Othentic framework provides flexibility to define custom logic for triggering tasks. In this example, Performer nodes monitor new blocks and execute a task every 20 blocks. Learn more about [Triggering a task](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#triggering-a-task)
 
 ## Project Structure
 
@@ -31,6 +34,13 @@ This repository contains:
 ```
 
 ## Architecture
+
+### Task Triggers:
+This repository contains two methods to trigger a Task:
+1. **New Block Production Trigger:** A task is automatically triggered every time a new block is produced on the blockchain.
+
+2. **Custom Event-Based Trigger:** A task is triggered when a specific custom event is emitted by a smart contract. When the event occurs, the log details (such as transaction hash, block number, and event data) are captured. A corresponding task is executed based on the event data.
+
 The Performer node executes tasks using the Task Execution Service and sends the results to the p2p network.
 
 Attester Nodes validate task execution through the Validation Service. Based on the Validation Service's response, attesters sign the tasks. In this AVS:
