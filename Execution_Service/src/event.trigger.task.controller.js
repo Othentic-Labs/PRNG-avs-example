@@ -1,10 +1,12 @@
 require('dotenv').config();
 const { ethers, Interface } = require('ethers');
 const dalService = require("./dal.service");
+const leaderElectionService = require("./leaderElection.service");
 
 const WS_RPC_URL = process.env.WS_RPC_URL;
 const provider = new ethers.WebSocketProvider(WS_RPC_URL);
 
+const nodeAccount = new ethers.Wallet(process.env.PRIVATE_KEY); // The signing key for performing tasks
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS ?? "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789";
 const eventSignature = "UserOperationEvent(bytes32,address,address,uint256,bool,uint256,uint256)";
 const topic = ethers.keccak256(ethers.toUtf8Bytes(eventSignature)); 
@@ -33,7 +35,7 @@ function performTask(log) {
         console.error("Failed to decode event log:", error);
     }
     // Add your task execution logic here.
-    return `${decodedEvent.args[0]}+${Date.now()}`;
+    return `${log.blockNumber}+${Date.now()}`;
 }
 
 /**
@@ -43,6 +45,9 @@ function performTask(log) {
 function start() {
     console.log("Starting polling...")
     provider.on(filter, async(log) => {
+        const currentPerformer = await leaderElectionService.electLeaderRoundRobin(log.blockNumber);
+        console.log("Elected Operator", currentPerformer)
+
         console.log(`
             ========================================
             Event Emitted:
@@ -57,10 +62,12 @@ function start() {
             ========================================
         `);
 
-        const proofOfTask = performTask(log);
-        const taskDefinitionId = 0;
-        const data = ethers.hexlify(ethers.toUtf8Bytes("hello world"));
-        await dalService.sendTask(proofOfTask, data, taskDefinitionId);
+        if (currentPerformer === nodeAccount.address) {
+            const proofOfTask = performTask(log);
+            const taskDefinitionId = 0;
+            const data = ethers.hexlify(ethers.toUtf8Bytes("hello world"));
+            await dalService.sendTask(proofOfTask, data, taskDefinitionId);
+        }
     });
 }
 

@@ -110,6 +110,9 @@ services:
       - PRIVATE_KEY=${PRIVATE_KEY_PERFORMER:-${PRIVATE_KEY:-}}
       - ATTESTATION_CENTER_ADDRESS=${ATTESTATION_CENTER_ADDRESS}
       - L2_RPC=${L2_RPC}
+      # For event based task triggers
+      - WS_RPC_URL=${WS_RPC_URL}
+      - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
     env_file:
       - .env
     ports:
