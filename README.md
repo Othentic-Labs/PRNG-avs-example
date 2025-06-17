@@ -15,11 +15,11 @@ This repository demonstrates the advanced features of the `othentic-cli`. It's r
 
 This repository contains:
 
-- **Leader Election Algorithm**: Implements a leader election algorithm to allocate task among multiple Performer nodes. Learn more about different task allocation mechanisms in the [official documentation](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#task-allocation-to-operators).
+- **Leader Election Algorithm**: Implements a leader election algorithm to allocate task among multiple Performer nodes. Learn more about different task allocation mechanisms in the [official documentation](https://docs.othentic.xyz/main/learn/advanced-concepts/leader-election).
 
-- **AVS Logic Hook**: Hooks enable developers to integrate custom logic seamlessly. The pseudo-random number generator (PRNG) smart contract utilizes this feature to generate a pseudo-random number after task execution. Learn more about [AVS Logic Hook](https://docs.othentic.xyz/main/avs-framework/smart-contracts/hooks/task-logic). 
+- **AVS Logic Hook**: Hooks enable developers to integrate custom logic seamlessly. The pseudo-random number generator (PRNG) smart contract utilizes this feature to generate a pseudo-random number after task execution. Learn more about [AVS Logic Hook](https://docs.othentic.xyz/main/learn/advanced-concepts/hooks/task-logic). 
 
-- **Custom Task triggers**: The Othentic framework provides flexibility to define custom logic for triggering tasks. In this example, Performer nodes monitor new blocks and execute a task every 20 blocks. Learn more about [Triggering a task](https://docs.othentic.xyz/main/avs-framework/othentic-consensus/task-and-task-definitions#triggering-a-task)
+- **Custom Task triggers**: The Othentic framework provides flexibility to define custom logic for triggering tasks. In this example, Performer nodes monitor new blocks and execute a task every 20 blocks. Learn more about [Triggering a task](https://docs.othentic.xyz/main/learn/core-concepts/tasks/triggers)
 
 ## Project Structure
 
@@ -76,7 +76,7 @@ The server exposes an endpoint `/task/validate` for validating the task performa
 
 
 ## Usage
-1. Create a .env file and include the deployed contract addresses and private keys for the operators. If you are unfamiliar with AVS, Checkout the [Quickstart guide](https://docs.othentic.xyz/main/avs-framework/quick-start).
+1. Create a .env file and include the deployed contract addresses and private keys for the operators. If you are unfamiliar with AVS, Checkout the [Quickstart guide]([https://docs.othentic.xyz/main/avs-framework/quick-start](https://docs.othentic.xyz/main/welcome/getting-started/install-othentic-cli)).
 
 2. Deploy the PRNG Contract: To use hooks, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory. Note that deploying this contract is optional; the AVS can run without it. This step is primarily for showcasing the use of hooks.
 
