@@ -23,4 +23,5 @@ interface IAttestationCenter {
         uint16 taskDefinitionId;
     }
     function setAvsLogic(address _avsLogic) external;
+    function taskNumber() external view returns (uint256);
 }
