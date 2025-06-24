@@ -3,19 +3,23 @@ const { ethers } = require('ethers');
 
 var rpcBaseAddress='';
 var privateKey='';
+var performerAddress='';
 
 function init() {
   rpcBaseAddress = process.env.OTHENTIC_CLIENT_RPC_ADDRESS;
   privateKey = process.env.PRIVATE_KEY;
+  performerAddress = process.env.PERFORMER_ADDRESS;
+
 }
 
 async function sendTask(proofOfTask, data, taskDefinitionId) {
-  var wallet = new ethers.Wallet(privateKey);
-  var performerAddress = wallet.address;
   data = ethers.hexlify(ethers.toUtf8Bytes(data));
   const message = ethers.AbiCoder.defaultAbiCoder().encode(["string", "bytes", "address", "uint16"], [proofOfTask, data, performerAddress, taskDefinitionId]);
   const messageHash = ethers.keccak256(message);
-  const sig = wallet.signingKey.sign(messageHash).serialized;
+
+  const signingKey = getSigningKey(privateKey);
+  const sig = sign(signingKey, messageHash);
+  const sigType = 'bls';
   
   const jsonRpcBody = {
     jsonrpc: "2.0",
@@ -26,6 +30,7 @@ async function sendTask(proofOfTask, data, taskDefinitionId) {
       taskDefinitionId,
       performerAddress,
       sig,
+      sigType
     ]
   };
     try {
