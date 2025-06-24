@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { ethers } = require('ethers');
+const { getSigningKey, sign } = require('./utils/mcl');
 
 var rpcBaseAddress='';
 var privateKey='';
