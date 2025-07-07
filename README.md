@@ -78,7 +78,13 @@ The server exposes an endpoint `/task/validate` for validating the task performa
 ## Usage
 1. Create a .env file and include the deployed contract addresses and private keys for the operators. If you are unfamiliar with AVS, Checkout the [Quickstart guide]([https://docs.othentic.xyz/main/avs-framework/quick-start](https://docs.othentic.xyz/main/welcome/getting-started/install-othentic-cli)).
 
-2. Deploy the PRNG Contract: To use hooks, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory. Note that deploying this contract is optional; the AVS can run without it. This step is primarily for showcasing the use of hooks.
+2. Install Othentic CLI:
+```bash
+npm i -g @othentic/cli
+npm i -g @othentic/node
+```
+
+3. Deploy the PRNG Contract: To use hooks, deploy an instance of the `PRNG contract` by navigating to the `contracts` directory. Note that deploying this contract is optional; the AVS can run without it. This step is primarily for showcasing the use of hooks.
 
 ```bash
 cd contracts/
@@ -86,7 +92,7 @@ forge install
 forge script PRNGDeploy --fork-url $L2_RPC --private-key $PRIVATE_KEY --broadcast -vvvv --verify --etherscan-api-key $L2_ETHERSCAN_API_KEY --chain $L2_CHAIN --sig="run(address)" $ATTESTATION_CENTER_ADDRESS
 ```
 
-3. Once the contract is deployed, return to the root of the repository and start the Docker Compose configuration:
+4. Once the contract is deployed, return to the root of the repository and start the Docker Compose configuration:
 ```bash
 docker-compose up --build
 ```
